@@ -1,0 +1,63 @@
+'use strict';
+
+
+class ColoredSquare  {
+
+    constructor(name, r, g, b, x, y, w, h, textColor = 'black') {
+        this.name = name;
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        this.textColor = textColor;
+    }
+
+    setColor(r, g, b) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+    }
+
+    drawUpdatedSquare() {
+        //noStroke();
+        fill(this.r, this.g, this.b);
+        rect(this.x, this.y, this.w, this.h);
+        let textRGB;
+        switch (this.textColor) {
+            case 'black':
+                textRGB = 0;
+                break;
+            case 'white':
+                textRGB = 255;
+                break;
+        }
+        textStyle(BOLD);
+        textSize(20 );
+        fill(textRGB);
+        text('Can you read this not so big', this.x + 10, this.y + 20);
+        text('text that is bunched close',   this.x + 10, this.y + 40);
+        text('together and purposely ',   this.x + 10, this.y + 60);
+        text('grouped so as to make it ',   this.x + 10, this.y + 80);
+        text('so you need to chose which ',   this.x + 10, this.y + 100);
+    }
+
+
+    isMouseClickedInsideSquare() {
+
+/*
+        console.log('mouse clicked at ' + mouseX + ' ' + mouseY 
+                    + ' : square is ' + this.x + '-' + (this.x+this.w)
+                    + ' , ' + this.y + '-' + (this.y+this.h));
+*/
+
+        if (mouseX > this.x && mouseX < (this.x + this.w) && mouseY > this.y && mouseY < (this.y + this.h)) {
+            console.log('mouse picked me! (' + this.name + ')');
+            return true;
+        } else {
+            return false
+        }
+    }
+}

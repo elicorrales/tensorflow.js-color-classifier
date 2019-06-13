@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!--
+-->
+    <link rel="stylesheet" href="../../libraries/bootstrap-3.3.7/bootstrap.min.css">
+    <title>Tensorflow.js Color Classifier</title>
+</head>
+
+<body onresize="doChangeCanvasWidth()">
+
+    <h2 class="text-center">Tensorflow.js Color Classifier</h2>
+
+    <div class="container container-fluid">
+        <div id="messages"></div>
+    </div>
+
+    <div class="container container-fluid">
+
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    2-Layer Neural Network Controls - Assumes 2 Inputs, 1 Output, User Selects # Hidden Nodes
+                </div>
+                <div class="panel-body">
+                    <label for="activationHidden">Activation Hidden:</label>
+                    <select id="activationHidden" name="activationHidden">
+                        <option value="sigmoid">Sigmoid</option>
+                        <option value="elu">Elu</option>
+                        <option value="hardSigmoid">HardSigmoid</option>
+                        <option value="linear">Linear</option>
+                        <option value="relu">Relu</option>
+                        <option value="relu6">Relu6</option>
+                        <option value="selu">Selu</option>
+                        <option value="softmax">Softmax</option>
+                        <option value="softplus">Softplus</option>
+                        <option value="softsign">Softsign</option>
+                        <option value="tanh">Tanh</option>
+                    </select>
+                    <label for="activationOutputs">Activation Outputs:</label>
+                    <select id="activationOutputs" name="activationOutputs">
+                        <option value="sigmoid">Sigmoid</option>
+                        <option value="elu">Elu</option>
+                        <option value="hardSigmoid">HardSigmoid</option>
+                        <option value="linear">Linear</option>
+                        <option value="relu">Relu</option>
+                        <option value="relu6">Relu6</option>
+                        <option value="selu">Selu</option>
+                        <option value="softmax" selected>Softmax</option>
+                        <option value="softplus">Softplus</option>
+                        <option value="softsign">Softsign</option>
+                        <option value="tanh">Tanh</option>
+                    </select>
+                    <label for="optimizer">Optimizer:</label>
+                    <select id="optimizer" name="optimizer">
+                        <option value="SGD">SGD</option>
+                        <option value="Momentum">Momentum</option>
+                        <option value="ADAGRAD" selected>ADAGRAD</option>
+                        <option value="ADADELTA">ADADELTA</option>
+                        <option value="ADAM">ADAM</option>
+                        <option value="ADAMAX">ADAMAX</option>
+                        <option value="RMSPROP">RMSPROP</option>
+                    </select>
+                    <label for="loss">Loss:</label>
+                    <select id="loss" name="loss">
+                        <option value="absoluteDifference">AbsoluteDifference</option>
+                        <option value="computeWeightedLoss">ComputeWeightedLoss</option>
+                        <option value="cosineDistance">CosineDistance</option>
+                        <option value="hingeLoss">HingeLoss</option>
+                        <option value="huberLoss" selected>HuberLoss</option>
+                        <option value="logLoss">LogLoss</option>
+                        <option value="meanSquaredError">MeanSquaredError</option>
+                        <option value="sigmoidCrossEntropy">SigmoidCrossEntropy</option>
+                        <option value="softmaxCrossEntropy">SoftmaxCrossEntropy</option>
+                    </select>
+                    <label for="nnNumHidden">Hidden Nodes:</label>
+                    <input id="nnNumHidden" name="nnNumHidden" type="text" placeholder="no of hidden" value="16" />
+                    <label for="nnNumEpoch">Epochs:</label>
+                    <input id="nnNumEpoch" name="nnNumEpoch" type="text" placeholder="no of Epoch" value="6000" />
+                    <label for="nnLossGoal">Loss Goal:</label>
+                    <input id="nnLossGoal" name="nnLossGoal" type="text" placeholder="Loss Goal" value="0.01" />
+                    Curr Loss: <span id="currLoss">0.00</span>
+                    <div class="clearFix">
+                        Learning Rate: <span id="learningRate"></span>
+                        <input id="learningRateSlider" type="range" min="0.001" max="2.0" step="0.001" value="0.3"
+                            onchange="doChangeLearningRate(this)">
+                    </div>
+                    <button class="btn btn-primary" onclick="doCreateNetwork()">Create Network</button>
+                    <button id="trainNetwork" class="btn btn-primary" onclick="doTrainNetwork(this)">Train Network</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Canvas
+                    <label for="canvasHeight">Height:</label>
+                    <input id="canvasHeight" name="canvasHeight" type="text" maxlength="3" size="3" placeholder="height"
+                        value="400" onchange="doChangeCanvasHeight(this)" />
+                    <label for="canvasResolution">Resolution:</label>
+                    <input id="canvasResolution" name="canvasResolution" maxlength="3" size="3" type="text"
+                        placeholder="height" value="30" onkeyup="doChangeCanvasResolution(this)" />
+                    Frame Rate: <span id="frameRate">0.00</span>
+
+                    <div class="btn-group" role="group" aria-label="Colors">
+                        <button id="Reddish" type="button" class="btn btn-secondary" onclick="doSubmitSelectedColor(this)">Reddish</button>
+                        <button id="Pinkish" type="button" class="btn btn-secondary" onclick="doSubmitSelectedColor(this)">Pinkish</button>
+                        <button id="Greenish" type="button" class="btn btn-secondary" onclick="doSubmitSelectedColor(this)">Greenish</button>
+                        <button id="Blueish" type="button" class="btn btn-secondary" onclick="doSubmitSelectedColor(this)">Blueish</button>
+                        <button id="Yellowish" type="button" class="btn btn-secondary" onclick="doSubmitSelectedColor(this)">Yellowish</button>
+                        <button id="Orangish" type="button" class="btn btn-secondary" onclick="doSubmitSelectedColor(this)">Orangish</button>
+                        <button id="Purpleish" type="button" class="btn btn-secondary" onclick="doSubmitSelectedColor(this)">Purpleish</button>
+                        <button id="Brownish" type="button" class="btn btn-secondary" onclick="doSubmitSelectedColor(this)">Brownish</button>
+                        <button id="Grayish" type="button" class="btn btn-secondary" onclick="doSubmitSelectedColor(this)">Grayish</button>
+                    </div>
+                    <div class="clearFix"></div>
+                </div>
+                <div class="panel-body">
+                    <!--
+                    <div class="checkbox">
+                        <label><input id="freezeTrainingInputs" type="checkbox">Show Only First Training Inputs</label>
+                    </div>
+                -->
+                    <div class="row">
+                        <button class="btn btn-info" onclick="doWriteColorDataToFile()">Save To File</button>
+                        <button id="guess" type="button" class="btn btn-primary" onclick="doStartGuessingColor(this)">Start Guessing</button>
+                    </div>
+                    <div class="row">
+                        <div id="canvasParent" class="col col-xs-12"></div>
+                        <div id="guessingStats" class="col col-xs-6 text-center">
+                            <div id="guessingInnerStats"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+</body>
+<script src="../../../p5/p5.min.js"></script>
+<script src="../../libraries/tfjs-1.1.2/dist/tf.min.js"></script>
+<script src="messages.js"></script>
+<script src="color.funcs.js"></script>
+<script src="data.handling.funcs.js"></script>
+<script src="neural.network.funcs.js"></script>
+<script src="canvas.drawing.funcs.js"></script>
+<script src="index.html.event.handlers.js"></script>
+<script src="sketch.js"></script>
+
+</html>
